@@ -1,7 +1,3 @@
-對，問題就在這裡：**不要把整份 README 再包在最外層的 ` ```markdown ` 裡。**
-
-你要的是 README 檔案本身直接長這樣：
-
 # RuneTown Companion
 
 RuneTown Companion 是一個使用 **Java 21** 開發的領域模型原型，目前定位為 **Nexelyth 的人生進程系統（Life Progression）原型**。
