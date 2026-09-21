@@ -3,9 +3,13 @@ package com.runetown.lifeprogression.domain.goal;
 public class CompletionCriterion {
 
     private final String description;
+
+    // 紀錄這個完成條件是否已被滿足
     private boolean completed;
 
+    // 這樣一來,Goal 類別就可以透過檢查 completionCriteria 這個清單裡,是否每一個 CompletionCriterion 的 isCompleted() 都回傳 true,來判斷整個目標是否完成。
     public CompletionCriterion(String description) {
+
         if (description == null || description.isBlank()) {
             throw new IllegalArgumentException(
                     "Completion criterion description cannot be blank");
@@ -16,6 +20,8 @@ public class CompletionCriterion {
     }
 
     public void complete() {
+
+        // 第一版先單純標記為完成
         this.completed = true;
     }
 

@@ -10,11 +10,18 @@ public class Goal {
     private final String title;
     private final LifeArchetype archetype;
 
+    // Goal 目前所處的生命週期狀態
     private GoalStatus status;
-
+    // Goal (目標)
+    // └── completionCriteria: List<CompletionCriterion>
+    //     ├── CompletionCriterion #1  "跑完一場馬拉松"
+    //     ├── CompletionCriterion #2  "讀完10本書"
+    //     └── CompletionCriterion #3  "存到10萬元"
+    // final 代表這個清單的參照一旦被賦值後不能再換成另一個清單(但清單裡的內容還是可以新增/刪除)
     private final List<CompletionCriterion> completionCriteria;
 
     public Goal(String id, String title, LifeArchetype archetype) {
+
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("Goal id cannot be blank");
         }
@@ -30,17 +37,52 @@ public class Goal {
         this.id = id;
         this.title = title;
         this.archetype = archetype;
+
+        // 新建立的 Goal 預設為進行中
         this.status = GoalStatus.ACTIVE;
+
         this.completionCriteria = new ArrayList<>();
     }
 
     public void addCompletionCriterion(CompletionCriterion criterion) {
+
         if (criterion == null) {
             throw new IllegalArgumentException(
                     "Completion criterion cannot be null");
         }
 
         completionCriteria.add(criterion);
+
+        // 新增條件後重新判斷 Goal 狀態
+        evaluateCompletionStatus();
+    }
+
+    public void evaluateCompletionStatus() {
+
+        // 已完成、已放棄、暫停中的 Goal
+        // 不讓系統自動重新改變它的狀態
+        if (status == GoalStatus.COMPLETED
+                || status == GoalStatus.ABANDONED
+                || status == GoalStatus.PAUSED) {
+            return;
+        }
+
+        // 沒有任何完成條件時，
+        // 不允許 Goal 自動進入 READY_TO_COMPLETE
+        if (completionCriteria.isEmpty()) {
+            status = GoalStatus.ACTIVE;
+            return;
+        }
+
+        // 核心 Business Rule：
+        // 所有 CompletionCriterion 都完成，
+        // Goal 才具有「可完成資格」
+        boolean allCompleted = completionCriteria.stream()
+                .allMatch(CompletionCriterion::isCompleted);
+
+        status = allCompleted
+                ? GoalStatus.READY_TO_COMPLETE
+                : GoalStatus.ACTIVE;
     }
 
     public String getId() {
@@ -60,6 +102,9 @@ public class Goal {
     }
 
     public List<CompletionCriterion> getCompletionCriteria() {
+
+        // 不直接暴露可修改的 List，
+        // 避免外部任意新增 / 刪除 criterion
         return Collections.unmodifiableList(completionCriteria);
     }
 }
