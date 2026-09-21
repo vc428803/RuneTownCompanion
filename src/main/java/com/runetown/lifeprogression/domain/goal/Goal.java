@@ -14,9 +14,9 @@ public class Goal {
     private GoalStatus status;
     // Goal (目標)
     // └── completionCriteria: List<CompletionCriterion>
-    //     ├── CompletionCriterion #1  "跑完一場馬拉松"
-    //     ├── CompletionCriterion #2  "讀完10本書"
-    //     └── CompletionCriterion #3  "存到10萬元"
+    // ├── CompletionCriterion #1 "跑完一場馬拉松"
+    // ├── CompletionCriterion #2 "讀完10本書"
+    // └── CompletionCriterion #3 "存到10萬元"
     // final 代表這個清單的參照一旦被賦值後不能再換成另一個清單(但清單裡的內容還是可以新增/刪除)
     private final List<CompletionCriterion> completionCriteria;
 
@@ -106,5 +106,16 @@ public class Goal {
         // 不直接暴露可修改的 List，
         // 避免外部任意新增 / 刪除 criterion
         return Collections.unmodifiableList(completionCriteria);
+    }
+
+    // 正式完成 Goal
+    public void complete() {
+
+        if (status != GoalStatus.READY_TO_COMPLETE) {
+            throw new IllegalStateException(
+                    "Goal must be READY_TO_COMPLETE before completion");
+        }
+
+        status = GoalStatus.COMPLETED;
     }
 }
