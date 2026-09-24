@@ -3,6 +3,10 @@ package com.runetown.lifeprogression.domain.goal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+
+import com.runetown.lifeprogression.domain.milestone.LifeDimension;
+import com.runetown.lifeprogression.domain.milestone.Milestone;
 
 public class Goal {
 
@@ -117,5 +121,24 @@ public class Goal {
         }
 
         status = GoalStatus.COMPLETED;
+    }
+
+    // 將已完成的 Goal 轉成 Milestone
+    public Milestone createMilestone(
+            String milestoneId,
+            Set<LifeDimension> dimensions) {
+
+        // 只有正式完成的 Goal 才能建立 Milestone
+        if (status != GoalStatus.COMPLETED) {
+            throw new IllegalStateException(
+                    "Only completed goals can create milestones");
+        }
+
+        return new Milestone(
+                milestoneId,
+                id,
+                title,
+                archetype,
+                dimensions);
     }
 }
