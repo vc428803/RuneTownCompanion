@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import com.runetown.lifeprogression.domain.evidence.Evidence;
 import com.runetown.lifeprogression.domain.milestone.LifeDimension;
 import com.runetown.lifeprogression.domain.milestone.Milestone;
 
@@ -58,6 +59,29 @@ public class Goal {
         completionCriteria.add(criterion);
 
         // 新增條件後重新判斷 Goal 狀態
+        evaluateCompletionStatus();
+    }
+
+    public void satisfyCriterionWithEvidence(
+            CompletionCriterion criterion,
+            Evidence evidence) {
+
+        if (criterion == null) {
+            throw new IllegalArgumentException(
+                    "Completion criterion cannot be null");
+        }
+
+        if (evidence == null) {
+            throw new IllegalArgumentException(
+                    "Evidence cannot be null");
+        }
+
+        if (!completionCriteria.contains(criterion)) {
+            throw new IllegalArgumentException(
+                    "Completion criterion does not belong to this goal");
+        }
+
+        criterion.satisfyWith(evidence);
         evaluateCompletionStatus();
     }
 
