@@ -7,6 +7,7 @@
 - EvidenceCandidate 經資格規則轉為 Evidence，並加入 CollectionEntry。
 - 合格 Evidence 可滿足 CompletionCriterion，觸發 Goal 重新評估並進入 `READY_TO_COMPLETE`；已完成 criterion 不允許替換 supporting Evidence。
 - `POST /api/goals/{goalId}/criteria/{criterionId}/evidence` 已透過本機 in-memory registry 跑通上述流程，成功與 qualification 失敗情境皆有 HTTP 整合測試及 Swagger 實測。
+- Mobile MVP read API 已可列出 Goals、讀取 Goal Detail 與 Criterion Detail；包含 criterion 完成數、LifeArchetype、registry 提供的 criterionId，以及可為 null 的 supporting Evidence，並已有 HTTP 整合測試與 Swagger 實測。
 - Goal、CompletionCriterion、GoalStatus、LifeArchetype、Milestone、LifeDimension、ImpactRule 與 GameImpactType 核心模型。
 - Goal 可由玩家明確確認為 `COMPLETED`，已完成 Goal 可建立帶有 LifeDimension 分類的 Milestone。
 - ImpactRule 可判斷 Milestone 是否包含全部必要 LifeDimension，且完整與缺少維度情境已有測試。
