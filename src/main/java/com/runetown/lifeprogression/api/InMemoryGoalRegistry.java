@@ -1,6 +1,8 @@
 package com.runetown.lifeprogression.api;
 
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -102,6 +104,25 @@ public class InMemoryGoalRegistry {
                 registeredGoal.collectionEntry()));
     }
 
+    public List<GoalTarget> findAllGoals() {
+        return goals.values().stream()
+                .map(this::toGoalTarget)
+                .sorted(Comparator.comparing(
+                        target -> target.goal().getId()))
+                .toList();
+    }
+
+    public Optional<GoalTarget> findGoal(String goalId) {
+        return Optional.ofNullable(goals.get(goalId))
+                .map(this::toGoalTarget);
+    }
+
+    private GoalTarget toGoalTarget(RegisteredGoal registeredGoal) {
+        return new GoalTarget(
+                registeredGoal.goal(),
+                registeredGoal.criteriaById());
+    }
+
     private record RegisteredGoal(
             Goal goal,
             CollectionEntry collectionEntry,
@@ -112,5 +133,10 @@ public class InMemoryGoalRegistry {
             Goal goal,
             CompletionCriterion criterion,
             CollectionEntry collectionEntry) {
+    }
+
+    public record GoalTarget(
+            Goal goal,
+            Map<String, CompletionCriterion> criteriaById) {
     }
 }
