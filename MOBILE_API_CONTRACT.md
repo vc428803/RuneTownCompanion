@@ -190,6 +190,35 @@ Malformed JSON or a missing request body may produce `400 Bad Request` from Spri
 
 The error body does not currently guarantee a human-readable domain message.
 
+### POST `/api/goals/{goalId}/completion`
+
+Completes a Goal that is currently `READY_TO_COMPLETE`. This operation calls the backend domain completion transition; satisfying every criterion alone does not complete a Goal.
+
+- Path parameter `goalId`: required string
+- Request body: none
+- `200 OK`: Goal completed
+- `404 Not Found`: Goal does not exist
+- `409 Conflict`: Goal is not `READY_TO_COMPLETE`, including when it is `ACTIVE`, `PAUSED`, `ABANDONED`, or already `COMPLETED`
+- Success response body: `GoalCompletionResponse`
+- Error response body: Spring's default error shape described above; no domain error DTO is guaranteed
+
+Example request:
+
+```http
+POST http://localhost:8080/api/goals/goal-demo/completion
+```
+
+Example successful response:
+
+```json
+{
+  "goalId": "goal-demo",
+  "goalStatus": "COMPLETED"
+}
+```
+
+The frontend must treat the operation as successful only after receiving `200 OK` with `goalStatus` equal to `COMPLETED`. The response is the backend-authoritative state and can be applied directly to the current Goal UI; a follow-up GET is not required.
+
 ## 3. Mobile MVP API Availability
 
 | Mobile need | Status |
@@ -198,8 +227,9 @@ The error body does not currently guarantee a human-readable domain message.
 | `GET /api/goals/{goalId}` | IMPLEMENTED |
 | `GET /api/goals/{goalId}/criteria/{criterionId}` | IMPLEMENTED |
 | `POST /api/goals/{goalId}/criteria/{criterionId}/evidence` | IMPLEMENTED |
+| `POST /api/goals/{goalId}/completion` | IMPLEMENTED |
 
-These four endpoints are the complete currently available Mobile MVP API surface.
+These five endpoints are the complete currently available Mobile MVP API surface.
 
 ## 4. Data Contract
 
@@ -279,6 +309,15 @@ Returned for both accepted (`200`) and qualification-rejected (`422`) submission
 | `criterionCompleted` | boolean | yes | no | Criterion state after processing. |
 | `goalStatus` | `GoalStatus` string | yes | no | Goal state after processing. |
 
+### Goal Completion Response
+
+Returned by `POST /api/goals/{goalId}/completion` after successful completion.
+
+| Field | JSON type | Required | Nullable | Meaning |
+|---|---|---:|---:|---|
+| `goalId` | string | yes | no | Completed Goal identifier. |
+| `goalStatus` | `GoalStatus` string | yes | no | Authoritative state after completion; currently `COMPLETED` for a successful response. |
+
 ## 5. Enum / Allowed Values
 
 ### GoalStatus
@@ -323,16 +362,16 @@ CHALLENGER
 - A criterion's single supporting Evidence as description/source, or `null`.
 - Evidence submission using title, description, and source.
 - Submission result using accepted, criterionCompleted, and latest goalStatus.
+- Explicit Goal completion from `READY_TO_COMPLETE`, with the authoritative `COMPLETED` status returned by the backend.
 - Updated GET responses after a successful POST, for the lifetime of the same server process.
 
 ### Domain exists, but no API is available
 
 - The collected Evidence list held by the backend has no read endpoint.
-- A Goal can represent `COMPLETED`, but there is currently no Goal completion HTTP endpoint.
 
 ### Not implemented as a Mobile API
 
-- Create, edit, delete, pause, abandon, or explicitly complete a Goal.
+- Create, edit, delete, pause, or abandon a Goal.
 - Create, edit, delete, or reorder completion criteria.
 - Evidence history or multiple supporting Evidence records per criterion.
 - Collection browsing APIs.
@@ -364,5 +403,5 @@ The Mobile app must not assume that any of the following currently exists:
 - Evidence history, Evidence IDs, Evidence title retrieval, or Evidence timestamps.
 - Authentication, user identity, authorization, or per-user data separation.
 - Database persistence, offline synchronization, or data surviving a server restart.
-- Goal creation, Goal completion, Goal editing, criterion management, or deletion APIs.
+- Goal creation, Goal editing, criterion management, or deletion APIs.
 - A server-calculated progress percentage.
