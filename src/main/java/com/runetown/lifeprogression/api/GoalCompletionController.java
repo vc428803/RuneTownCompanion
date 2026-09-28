@@ -20,9 +20,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Life Progression")
 public class GoalCompletionController {
 
-    private final InMemoryGoalRegistry goalRegistry;
+    private final GoalRegistry goalRegistry;
 
-    public GoalCompletionController(InMemoryGoalRegistry goalRegistry) {
+    public GoalCompletionController(GoalRegistry goalRegistry) {
         this.goalRegistry = goalRegistry;
     }
 
@@ -56,6 +56,8 @@ public class GoalCompletionController {
                     exception.getMessage(),
                     exception);
         }
+
+        goalRegistry.save(goal);
 
         return new GoalCompletionResponse(goal.getId(), goal.getStatus());
     }

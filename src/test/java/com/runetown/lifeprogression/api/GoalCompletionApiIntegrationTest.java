@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.runetown.lifeprogression.domain.collection.CollectionEntry;
 import com.runetown.lifeprogression.domain.evidence.Evidence;
@@ -22,6 +23,7 @@ import com.runetown.lifeprogression.domain.goal.GoalStatus;
 import com.runetown.lifeprogression.domain.goal.LifeArchetype;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("in-memory")
 class GoalCompletionApiIntegrationTest {
 
     @LocalServerPort

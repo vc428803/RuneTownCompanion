@@ -15,7 +15,7 @@ import com.runetown.lifeprogression.domain.goal.Goal;
 import com.runetown.lifeprogression.domain.goal.LifeArchetype;
 
 @Component
-public class InMemoryGoalRegistry {
+public class InMemoryGoalRegistry implements GoalRegistry {
 
     private final Map<String, RegisteredGoal> goals =
             new ConcurrentHashMap<>();

@@ -25,11 +25,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Life Progression")
 public class GoalEvidenceController {
 
-    private final InMemoryGoalRegistry goalRegistry;
+    private final GoalRegistry goalRegistry;
     private final ProcessEvidenceCandidateService evidenceService;
 
     public GoalEvidenceController(
-            InMemoryGoalRegistry goalRegistry,
+            GoalRegistry goalRegistry,
             ProcessEvidenceCandidateService evidenceService) {
 
         this.goalRegistry = goalRegistry;
@@ -76,6 +76,10 @@ public class GoalEvidenceController {
                     HttpStatus.CONFLICT,
                     exception.getMessage(),
                     exception);
+        }
+
+        if (accepted) {
+            goalRegistry.save(target.goal());
         }
 
         EvidenceSubmissionResponse response = new EvidenceSubmissionResponse(

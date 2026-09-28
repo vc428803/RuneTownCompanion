@@ -25,9 +25,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Life Progression")
 public class GoalQueryController {
 
-    private final InMemoryGoalRegistry goalRegistry;
+    private final GoalRegistry goalRegistry;
 
-    public GoalQueryController(InMemoryGoalRegistry goalRegistry) {
+    public GoalQueryController(GoalRegistry goalRegistry) {
         this.goalRegistry = goalRegistry;
     }
 
